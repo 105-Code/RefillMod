@@ -7,8 +7,8 @@
     <ProjectGuid>{F9FA369A-40BA-4897-9FE8-3B3D72AB4444}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EngineMod</RootNamespace>
-    <AssemblyName>EngineMod</AssemblyName>
+    <RootNamespace>RefillMod</RootNamespace>
+    <AssemblyName>RefillMod</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -41,6 +41,7 @@
     </Reference>
     <Reference Include="ModLoader">
       <HintPath>..\Dependecies\ModLoader.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

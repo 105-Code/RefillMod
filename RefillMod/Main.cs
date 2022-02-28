@@ -41,10 +41,13 @@ namespace RefillMod
                 UnityEngine.Object.DontDestroyOnLoad(menu);
                 menu.SetActive(true);
                 Main.menuObject = menu;
+                return;
             }
-            else
+
+            if (menuObject != null)
             {
                 UnityEngine.Object.Destroy(menuObject);
+                menuObject = null;
             }
         }
 
