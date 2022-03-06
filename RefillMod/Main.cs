@@ -1,9 +1,5 @@
 ﻿using HarmonyLib;
 using ModLoader;
-using SFS;
-using SFS.Parts;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,24 +9,19 @@ namespace RefillMod
     {
         public static GameObject menuObject;
 
-        public static Harmony patcher;
-        public string getModAuthor()
+        public Main() : base(
+            "refillmod", // mod id
+            "RefillMod", // Mod name
+            "Dani0105",  // author
+            "v1.1.x", // mod loader verison
+            "v1.1.0", // mod version
+            "This mod add a refill button in wold map", // description
+            null, // assets file name
+            null //dependecies
+            ) 
         {
-            return "Dani0105";
         }
 
-        public string getModName()
-        {
-            return "ReFill";
-        }
-
-        public void load()
-        {
-            Main.patcher = new Harmony("website.danielrojas.RefillMod");
-            Main.patcher.PatchAll();
-
-            Loader.modLoader.suscribeOnChangeScene(this.OnSceneLoaded);
-        }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
@@ -44,6 +35,14 @@ namespace RefillMod
                 return;
             }
 
+            if(scene.name == "Home_PC")
+            {
+                Debug.Log("Create Arm prefab");
+                GameObject arm = this.Assets.LoadAsset<GameObject>("Arm");
+                Object.Instantiate(arm, new Vector3(1f, 2f, 3f), Quaternion.identity);
+                arm.SetActive(true);
+            }
+
             if (menuObject != null)
             {
                 UnityEngine.Object.Destroy(menuObject);
@@ -51,7 +50,15 @@ namespace RefillMod
             }
         }
 
-        public void unload()
+        public override void load()
+        {
+            Harmony patcher = new Harmony("website.danielrojas.RefillMod");
+            patcher.PatchAll();
+
+            Loader.main.suscribeOnChangeScene(this.OnSceneLoaded);
+        }
+
+        public override void unload()
         {
             throw new System.NotImplementedException();
         }
