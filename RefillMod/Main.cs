@@ -1,5 +1,8 @@
 ﻿using HarmonyLib;
 using ModLoader;
+using SFS.Input;
+using SFS.Parts.Modules;
+using SFS.World;
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -23,45 +26,26 @@ namespace RefillMod
         {
         }
 
-
-        private void OnWorldSceneLoaded(object sender, EventArgs e)
+        private void onWorld(object sender, EventArgs e)
         {
-            Debug.Log("WorldSceneLoaded");
-            GameObject menu = new GameObject("RefillMod");
-            menu.AddComponent<Menu>();
-            UnityEngine.Object.DontDestroyOnLoad(menu);
-            menu.SetActive(true);
-            Main.menuObject = menu;
-        }
-
-        private void OnHomeSceneLoaded(object sender, EventArgs e)
-        {
-            Debug.Log("HomeLoaded");
-            if (menuObject != null)
+            if (Input.GetKeyDown(KeyCode.O))
             {
-                UnityEngine.Object.Destroy(menuObject);
-                menuObject = null;
-            }
-        }
+                Rocket rocket = PlayerController.main.player.Value as Rocket;
+                if (rocket)
+                {
+                    ResourceModule[] tanks = rocket.partHolder.GetModules<ResourceModule>();
 
-        private void OnBuildSceneLoaded(object sender, EventArgs e)
-        {
-            Debug.Log("BuildSceneLoaded");
-            if (menuObject != null)
-            {
-                UnityEngine.Object.Destroy(menuObject);
-                menuObject = null;
+                    foreach (ResourceModule tank in tanks)
+                    {
+                        tank.AddResource(1000f);
+                    }
+                }
             }
         }
 
         public override void load()
         {
-            Harmony patcher = new Harmony("website.danielrojas.RefillMod");
-            patcher.PatchAll();
-
-            Helper.OnWorldSceneLoaded += this.OnWorldSceneLoaded;
-            Helper.OnHomeSceneLoaded += this.OnHomeSceneLoaded;
-            Helper.OnBuildSceneLoaded += this.OnBuildSceneLoaded;
+            Helper.OnUpdateWorldScene += this.onWorld;
         }
 
         public override void unload()
