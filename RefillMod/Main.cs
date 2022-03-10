@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using ModLoader;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,26 +24,29 @@ namespace RefillMod
         }
 
 
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        private void OnWorldSceneLoaded(object sender, EventArgs e)
         {
-            if(scene.name == "World_PC")
-            {
-                GameObject menu = new GameObject("RefillMod");
-                menu.AddComponent<Menu>();
-                UnityEngine.Object.DontDestroyOnLoad(menu);
-                menu.SetActive(true);
-                Main.menuObject = menu;
-                return;
-            }
+            Debug.Log("WorldSceneLoaded");
+            GameObject menu = new GameObject("RefillMod");
+            menu.AddComponent<Menu>();
+            UnityEngine.Object.DontDestroyOnLoad(menu);
+            menu.SetActive(true);
+            Main.menuObject = menu;
+        }
 
-            if(scene.name == "Home_PC")
+        private void OnHomeSceneLoaded(object sender, EventArgs e)
+        {
+            Debug.Log("HomeLoaded");
+            if (menuObject != null)
             {
-                Debug.Log("Create Arm prefab");
-                GameObject arm = this.Assets.LoadAsset<GameObject>("Arm");
-                Object.Instantiate(arm, new Vector3(1f, 2f, 3f), Quaternion.identity);
-                arm.SetActive(true);
+                UnityEngine.Object.Destroy(menuObject);
+                menuObject = null;
             }
+        }
 
+        private void OnBuildSceneLoaded(object sender, EventArgs e)
+        {
+            Debug.Log("BuildSceneLoaded");
             if (menuObject != null)
             {
                 UnityEngine.Object.Destroy(menuObject);
@@ -55,7 +59,9 @@ namespace RefillMod
             Harmony patcher = new Harmony("website.danielrojas.RefillMod");
             patcher.PatchAll();
 
-            Loader.main.suscribeOnChangeScene(this.OnSceneLoaded);
+            Helper.OnWorldSceneLoaded += this.OnWorldSceneLoaded;
+            Helper.OnHomeSceneLoaded += this.OnHomeSceneLoaded;
+            Helper.OnBuildSceneLoaded += this.OnBuildSceneLoaded;
         }
 
         public override void unload()
